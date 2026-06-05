@@ -13,6 +13,8 @@ from scout.schemas import ResumeSchema, JobDescriptionSchema, GapAnalysisSchema
 
 logger = setup_logger(__name__)
 
+GEMINI_MODEL = "gemini-2.5-flash"
+
 
 def _initialize_client():
     """Initialize Instructor-wrapped Google GenAI client."""
@@ -22,7 +24,7 @@ def _initialize_client():
 
     genai.configure(api_key=api_key)
     # Use instructor to wrap the Gemini client for structured outputs
-    client = instructor.from_gemini()
+    client = instructor.from_gemini(genai.GenerativeModel(GEMINI_MODEL))
     return client
 
 
@@ -58,7 +60,6 @@ def extract_resume(pdf_path: str) -> ResumeSchema:
         client = _initialize_client()
 
         resume = client.messages.create(
-            model="gemini-2.5-flash",
             response_model=ResumeSchema,
             messages=[
                 {
@@ -109,7 +110,6 @@ def extract_jd(jd_text: str) -> JobDescriptionSchema:
         client = _initialize_client()
 
         jd = client.messages.create(
-            model="gemini-2.5-flash",
             response_model=JobDescriptionSchema,
             messages=[
                 {
@@ -175,7 +175,6 @@ Years Required: {jd.years_required}
 """
 
         gap_analysis = client.messages.create(
-            model="gemini-2.5-flash",
             response_model=GapAnalysisSchema,
             messages=[
                 {

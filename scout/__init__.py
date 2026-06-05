@@ -1,5 +1,9 @@
 """Scout v0 - Resume and Job Description Gap Analysis Tool"""
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from scout.core import extract_resume, extract_jd, analyze_gaps
 from scout.schemas import ResumeSchema, JobDescriptionSchema, GapAnalysisSchema
 
