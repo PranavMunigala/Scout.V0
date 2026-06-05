@@ -1,0 +1,72 @@
+JOHN SMITH
+john.smith@email.com | (555) 123-4567 | LinkedIn: linkedin.com/in/johnsmith
+
+---
+
+PROFESSIONAL SUMMARY
+
+Experienced Senior Software Engineer with 8 years of full-stack development expertise. 
+Specialized in building scalable backend systems using Python, FastAPI, and PostgreSQL. 
+Strong track record of leading technical teams, architecting microservices, and mentoring junior developers.
+
+---
+
+TECHNICAL SKILLS
+
+Languages: Python, JavaScript, TypeScript, SQL, Go
+Frameworks & Libraries: FastAPI, Django, React, Node.js, TensorFlow
+Databases: PostgreSQL, MongoDB, Redis, Elasticsearch
+Cloud & DevOps: AWS (EC2, S3, RDS, Lambda), Docker, Kubernetes, GitHub Actions, CI/CD
+Tools & Platforms: Git, Terraform, Jenkins, Datadog, PagerDuty
+Methodologies: Agile, Scrum, Test-Driven Development, Microservices Architecture
+
+---
+
+PROFESSIONAL EXPERIENCE
+
+Senior Software Engineer
+TechCorp Inc., San Francisco, CA | Jan 2021 - Present (3.5 years)
+- Architected and led development of microservices platform handling 10M+ daily requests
+- Designed and implemented PostgreSQL optimization reducing query times by 65%
+- Mentored team of 4 junior engineers on best practices and system design
+- Implemented Kubernetes-based deployment pipeline reducing release time from 2 hours to 15 minutes
+- Spearheaded migration from monolithic architecture to microservices using FastAPI
+
+Full Stack Engineer
+CloudSystems LLC, Austin, TX | Jun 2018 - Dec 2020 (2.5 years)
+- Developed backend REST APIs using FastAPI handling 1M+ requests daily
+- Built React dashboard for real-time monitoring and analytics
+- Implemented Redis caching layer reducing database load by 40%
+- Contributed to open-source projects (Python and JavaScript community)
+
+Software Engineer
+StartupXYZ, Remote | Mar 2016 - May 2018 (2+ years)
+- Built full-stack e-commerce platform using Python Django and Angular
+- Integrated payment processing (Stripe, PayPal) for 500+ merchants
+- Wrote comprehensive unit and integration tests (>90% code coverage)
+
+Junior Developer
+WebDev Solutions, Denver, CO | Jul 2015 - Feb 2016 (8 months)
+- Entry-level web development and bug fixes
+
+---
+
+EDUCATION
+
+Bachelor of Science in Computer Science
+University of Colorado, Boulder | Graduated: May 2015
+
+---
+
+CERTIFICATIONS & AWARDS
+
+- AWS Certified Solutions Architect - Professional (2022)
+- Databricks Certified Associate Developer (2023)
+- "Developer of the Year" - TechCorp Inc. (2023)
+
+---
+
+ADDITIONAL INFORMATION
+
+Publications: "Optimizing FastAPI for High-Throughput Systems" - Published in Dev.to (2023)
+Languages: English (Native), Spanish (Conversational)

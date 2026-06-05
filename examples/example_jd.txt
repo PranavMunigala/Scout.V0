@@ -1,0 +1,69 @@
+SENIOR PYTHON BACKEND ENGINEER - FASTAPI SPECIALIST
+
+Location: San Francisco, CA | Remote OK | Salary: $180K - $220K
+
+---
+
+ABOUT THE ROLE
+
+We're looking for a Senior Python Backend Engineer to join our growing engineering team. 
+You'll architect and build scalable microservices that power our platform serving millions of users.
+This is a leadership role where you'll mentor junior engineers and influence technical direction.
+
+---
+
+REQUIRED QUALIFICATIONS (MUST-HAVES)
+
+- 7+ years of professional software development experience
+- 5+ years of Python development with demonstrated expertise
+- Strong proficiency with FastAPI or similar modern Python web frameworks
+- Production experience with PostgreSQL (query optimization, complex schemas)
+- Cloud architecture experience on AWS (EC2, RDS, S3, Lambda, VPC)
+- Microservices architecture design and implementation experience
+- Leadership and mentoring experience with engineering teams
+- Strong system design and architecture skills
+- Bachelor's degree in Computer Science or equivalent professional experience
+- Experience with Docker and container orchestration (Kubernetes preferred)
+
+---
+
+PREFERRED QUALIFICATIONS (NICE-TO-HAVES)
+
+- AWS Solutions Architect certification or similar cloud certification
+- Experience with event-driven architectures (Kafka, RabbitMQ, AWS SQS)
+- Contributions to open-source projects
+- Experience with machine learning model serving
+- Published technical writing or presentations at conferences
+- Experience with GraphQL APIs
+- Familiarity with Go language
+- DevOps and Infrastructure-as-Code experience (Terraform, CloudFormation)
+- Experience with CI/CD tools (GitHub Actions, Jenkins, GitLab CI)
+- Track record of mentoring and growing engineering talent
+
+---
+
+RESPONSIBILITIES
+
+- Design and implement scalable backend services using Python and FastAPI
+- Optimize database queries and design efficient data models
+- Architect microservices solutions for complex business problems
+- Lead code reviews and set code quality standards
+- Mentor junior and mid-level engineers
+- Participate in on-call rotation and incident response
+- Collaborate with product and design teams on technical requirements
+- Evaluate and adopt new technologies when appropriate
+
+---
+
+WHAT WE OFFER
+
+- Competitive salary and equity
+- Health insurance (medical, dental, vision)
+- 401(k) matching
+- Flexible working arrangements
+- Professional development budget
+- Collaborative and inclusive culture
+
+---
+
+Equal Opportunity Employer: We are committed to building a diverse and inclusive team.
