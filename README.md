@@ -1,6 +1,6 @@
 # Scout v0 - Resume & Job Description Gap Analysis Tool
 
-A production-ready CLI tool that extracts structured JSON data from resumes (PDFs) and job descriptions (TXT), and performs deterministic gap analysis using Google's Gemini API with Instructor.
+A CLI tool that extracts structured JSON data from resumes (PDFs) and job descriptions (TXT), and performs deterministic gap analysis using Google's Gemini API with Instructor.
 
 ## Features
 
@@ -8,11 +8,10 @@ A production-ready CLI tool that extracts structured JSON data from resumes (PDF
 - **Job Description Analysis**: Extracts must-haves, nice-to-haves, and minimum experience requirements
 - **Gap Analysis**: Deterministically evaluates if resume meets job requirements with evidence-based results
 - **Structured Output**: JSON output combining all extracted data and gap analysis
-- **Error Logging**: Comprehensive logging of LLM validation/retry errors to `scout_retries.log`
 
 ## Installation
 
-### Prerequisites
+### Things you need
 
 - Python 3.8+
 - Google API Key (for Gemini 2.5 Flash)
@@ -116,7 +115,7 @@ README.md                  # This file
 
 - **typer**: CLI framework
 - **pydantic**: Schema validation (v2)
-- **instructor**: Structured LLM outputs
+- **instructor**: Structured LLM outputs (ensures output from LLM matches Schema)
 - **google-generativeai**: Gemini API access
 - **pymupdf (fitz)**: PDF text extraction
 
@@ -128,7 +127,7 @@ All LLM validation errors and retries are logged to `scout_retries.log`. The too
 - Logs detailed error messages for debugging
 - Exits gracefully with meaningful error messages
 
-## Example Workflow
+## Workflow
 
 1. User provides resume PDF and job description text
 2. Scout extracts resume data (skills, experience, seniority)
