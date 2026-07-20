@@ -115,3 +115,30 @@ class GapAnalysisSchema(BaseModel):
             "Each item must have skill_or_requirement, evidence_in_resume (bool), and notes (explanation)."
         ),
     )
+
+
+class CompanyBrief(BaseModel):
+    """Verified company context passed from the Researcher to the Writer."""
+
+    name: str = Field(..., min_length=1)
+    mission: str = Field(..., description="A concise description of the company's mission.")
+    recent_news: List[str] = Field(
+        default_factory=list,
+        description="Recent, source-backed company developments relevant to the application.",
+    )
+    hiring_signals: List[str] = Field(
+        default_factory=list,
+        description="Specific signals about the company's team, role, or hiring priorities.",
+    )
+    sources: List[str] = Field(
+        default_factory=list,
+        description="URLs supporting the brief. Claims without a source must be omitted.",
+    )
+
+
+class Revision(BaseModel):
+    """A precise editorial change request passed from Editor to Writer."""
+
+    line_number: int = Field(..., ge=1)
+    issue: str = Field(..., min_length=1)
+    suggestion: str = Field(..., min_length=1)
