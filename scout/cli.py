@@ -1,4 +1,4 @@
-"""CLI interface for Scout v0."""
+"""CLI interface for Scout v0 and the Day 1 Scout v2 pipeline."""
 
 import json
 import sys
@@ -7,107 +7,63 @@ from typing import Optional
 
 import typer
 
-from scout.core import extract_resume, extract_jd, analyze_gaps
+from scout.core import analyze_gaps, extract_jd, extract_resume
 from scout.logger import setup_logger
-from scout.schemas import ResumeSchema, JobDescriptionSchema, GapAnalysisSchema
 
-app = typer.Typer(
-    name="scout",
-    help="Scout v0 - Extract and analyze resumes against job descriptions.",
-)
+app = typer.Typer(name="scout", help="Scout - resume and job-description tools.")
 logger = setup_logger(__name__)
 
 
 @app.command()
 def extract(
-    resume: str = typer.Option(
-        ...,
-        "--resume",
-        help="Path to the resume PDF file.",
-        exists=True,
-    ),
-    jd: str = typer.Option(
-        ...,
-        "--jd",
-        help="Path to the job description text file.",
-        exists=True,
-    ),
-    out: str = typer.Option(
-        "scout_output.json",
-        "--out",
-        help="Path to save the output JSON file.",
-    ),
+    resume: str = typer.Option(..., "--resume", help="Path to the resume PDF file.", exists=True),
+    jd: str = typer.Option(..., "--jd", help="Path to the job description text file.", exists=True),
+    out: str = typer.Option("scout_output.json", "--out", help="Path to save the output JSON file."),
 ) -> None:
-    """
-    Extract resume and JD data, perform gap analysis, and save combined results.
-
-    This command:
-    1. Extracts structured data from the resume PDF
-    2. Extracts structured data from the job description
-    3. Analyzes gaps between resume and JD must-haves
-    4. Saves all results to a JSON file
-    """
+    """Run the unchanged Scout v0 extraction and gap-analysis flow."""
     try:
-        typer.echo("🔍 Extracting resume data...", err=False)
         resume_data = extract_resume(resume)
-        typer.echo("✓ Resume extracted successfully", err=False)
-
-        typer.echo("🔍 Extracting job description data...", err=False)
-        with open(jd, "r", encoding="utf-8") as f:
-            jd_text = f.read()
-        jd_data = extract_jd(jd_text)
-        typer.echo("✓ Job description extracted successfully", err=False)
-
-        typer.echo("🔍 Performing gap analysis...", err=False)
+        jd_data = extract_jd(Path(jd).read_text(encoding="utf-8"))
         gap_data = analyze_gaps(resume_data, jd_data)
-        typer.echo("✓ Gap analysis completed successfully", err=False)
-
-        # Combine all data into a single output
         output = {
             "resume": resume_data.model_dump(),
             "job_description": jd_data.model_dump(),
             "gap_analysis": gap_data.model_dump()["gap_analysis"],
         }
+        Path(out).write_text(json.dumps(output, indent=2, ensure_ascii=False), encoding="utf-8")
+        typer.echo(f"Results saved to {out}")
+    except (FileNotFoundError, ValueError) as exc:
+        typer.echo(f"Validation error: {exc}", err=True)
+        logger.error("Extraction failed: %s", exc)
+        raise typer.Exit(code=1)
+    except Exception as exc:
+        typer.echo(f"Unexpected error: {exc}", err=True)
+        logger.error("Unexpected extraction error: %s", exc)
+        raise typer.Exit(code=1)
 
-        # Save to JSON file
-        output_path = Path(out)
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(output, f, indent=2, ensure_ascii=False)
 
-        typer.echo(f"✅ Results saved to {output_path}", err=False)
-        typer.echo(f"\nSummary:")
-        typer.echo(f"  Resume Skills: {len(resume_data.skills)}")
-        typer.echo(f"  Seniority: {resume_data.seniority_level}")
-        typer.echo(f"  Experience: {resume_data.years_of_experience} years")
-        typer.echo(f"  Must-Haves: {len(jd_data.must_haves)}")
-        typer.echo(f"  Years Required: {jd_data.years_required}")
+@app.command("cover-letter")
+def cover_letter(
+    resume: str = typer.Option(..., "--resume", help="Path to the resume PDF file.", exists=True),
+    jd: str = typer.Option(..., "--jd", help="Path to the job description text file.", exists=True),
+    company: str = typer.Option(..., "--company", help="Target company name for the Researcher."),
+    out: Optional[str] = typer.Option(None, "--out", help="Optional path to save the cover letter."),
+) -> None:
+    """Run Day 1: Researcher -> Writer -> stub Editor -> completed letter."""
+    try:
+        from scout.v2.pipeline import run_cover_letter
 
-        # Calculate gap percentage
-        gaps_found = sum(
-            1 for item in gap_data.gap_analysis if not item.evidence_in_resume
-        )
-        gap_percentage = (
-            (gaps_found / len(gap_data.gap_analysis) * 100)
-            if gap_data.gap_analysis
-            else 0
-        )
-        typer.echo(f"  Gap Percentage: {gap_percentage:.1f}%")
-
-    except FileNotFoundError as e:
-        typer.echo(f"❌ File error: {e}", err=True)
-        logger.error(f"File not found: {e}")
-        sys.exit(1)
-
-    except ValueError as e:
-        typer.echo(f"❌ Validation error: {e}", err=True)
-        logger.error(f"Validation error: {e}")
-        sys.exit(1)
-
-    except Exception as e:
-        typer.echo(f"❌ Unexpected error: {e}", err=True)
-        logger.error(f"Unexpected error during extraction: {e}")
-        sys.exit(1)
+        resume_data = extract_resume(resume)
+        jd_data = extract_jd(Path(jd).read_text(encoding="utf-8"))
+        letter = run_cover_letter(resume_data, jd_data, company)["draft"]
+        if out:
+            Path(out).write_text(letter, encoding="utf-8")
+            typer.echo(f"Cover letter saved to {out}")
+        else:
+            typer.echo(letter)
+    except Exception as exc:
+        typer.echo(f"Cover-letter pipeline failed: {exc}", err=True)
+        raise typer.Exit(code=1)
 
 
 @app.command()
