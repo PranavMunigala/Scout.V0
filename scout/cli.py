@@ -49,18 +49,32 @@ def cover_letter(
     company: str = typer.Option(..., "--company", help="Target company name for the Researcher."),
     out: Optional[str] = typer.Option(None, "--out", help="Optional path to save the cover letter."),
 ) -> None:
-    """Run Day 1: Researcher -> Writer -> stub Editor -> completed letter."""
+    """Run the bounded Day 2 Researcher -> Writer -> Editor workflow."""
     try:
-        from scout.v2.pipeline import run_cover_letter
+        from scout.v2.pipeline import TokenBudgetExceeded, run_cover_letter
 
         resume_data = extract_resume(resume)
         jd_data = extract_jd(Path(jd).read_text(encoding="utf-8"))
-        letter = run_cover_letter(resume_data, jd_data, company)["draft"]
+        result = run_cover_letter(resume_data, jd_data, company)
+        letter = result["draft"]
         if out:
             Path(out).write_text(letter, encoding="utf-8")
             typer.echo(f"Cover letter saved to {out}")
         else:
             typer.echo(letter)
+        spend = result["token_spend"]
+        typer.echo(
+            f"Token usage: {spend.total_tokens}/{spend.budget_tokens} "
+            f"(completion: {result['completed_reason']})",
+            err=True,
+        )
+    except TokenBudgetExceeded as exc:
+        spend = exc.spend
+        typer.echo(
+            f"Token usage: {spend.total_tokens}/{spend.budget_tokens} (budget exceeded)",
+            err=True,
+        )
+        raise typer.Exit(code=1)
     except Exception as exc:
         typer.echo(f"Cover-letter pipeline failed: {exc}", err=True)
         raise typer.Exit(code=1)

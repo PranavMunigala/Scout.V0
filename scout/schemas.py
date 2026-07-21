@@ -142,3 +142,19 @@ class Revision(BaseModel):
     line_number: int = Field(..., ge=1)
     issue: str = Field(..., min_length=1)
     suggestion: str = Field(..., min_length=1)
+
+
+class TokenUsage(BaseModel):
+    """Actual model token usage recorded for one agent in a pipeline run."""
+
+    input_tokens: int = Field(default=0, ge=0)
+    output_tokens: int = Field(default=0, ge=0)
+    total_tokens: int = Field(default=0, ge=0)
+
+
+class RunTokenSpend(BaseModel):
+    """Budget and observed Claude usage for one cover-letter run."""
+
+    budget_tokens: int = Field(..., gt=0)
+    total_tokens: int = Field(default=0, ge=0)
+    by_agent: dict[str, TokenUsage] = Field(default_factory=dict)

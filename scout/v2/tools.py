@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
@@ -33,3 +34,20 @@ def web_search(query: str) -> str:
         if isinstance(topic, dict) and topic.get("Text"):
             results.append({"title": topic.get("FirstURL", query), "url": topic.get("FirstURL", ""), "snippet": topic["Text"]})
     return json.dumps(results, ensure_ascii=False)
+
+
+@tool
+def grammar_check(draft: str) -> str:
+    """Check a cover-letter draft for basic mechanical grammar issues by line."""
+    findings = []
+    for line_number, line in enumerate(draft.splitlines(), start=1):
+        text = line.strip()
+        if not text:
+            continue
+        if re.search(r"\b([A-Za-z]+)\s+\1\b", text, flags=re.IGNORECASE):
+            findings.append({"line_number": line_number, "issue": "Repeated word"})
+        if re.search(r"\bi\b", text):
+            findings.append({"line_number": line_number, "issue": "Pronoun 'I' must be capitalized"})
+        if re.search(r"\s{2,}", line):
+            findings.append({"line_number": line_number, "issue": "Repeated whitespace"})
+    return json.dumps(findings, ensure_ascii=False)
