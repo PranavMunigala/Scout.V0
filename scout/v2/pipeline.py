@@ -124,7 +124,18 @@ class EditorState(TypedDict, total=False):
 
 def _content(message: object) -> str:
     content = getattr(message, "content", message)
-    return content if isinstance(content, str) else str(content)
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        text_parts = []
+        for block in content:
+            if isinstance(block, dict) and block.get("type") == "text":
+                text_parts.append(str(block.get("text", "")))
+            elif getattr(block, "type", None) == "text":
+                text_parts.append(str(getattr(block, "text", "")))
+        if text_parts:
+            return "\n".join(text_parts)
+    return str(content)
 
 
 def _budget_from_env() -> int:
@@ -139,7 +150,6 @@ def _model() -> ChatAnthropic:
         raise ValueError("ANTHROPIC_API_KEY environment variable not set for Scout v2.")
     return ChatAnthropic(
         model=os.getenv("SCOUT_V2_MODEL", "claude-sonnet-5"),
-        temperature=0,
         max_tokens=4096,
     )
 
