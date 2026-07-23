@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 from typing import Annotated, Any, Literal, TypedDict
 
 from langchain_anthropic import ChatAnthropic
@@ -26,6 +27,7 @@ from scout.v2.tools import grammar_check, web_search
 logger = logging.getLogger(__name__)
 DEFAULT_TOKEN_BUDGET = 50_000
 MAX_REVISION_CYCLES = 2
+DEFAULT_SKILL_PATH = Path(__file__).resolve().parents[3] / "claude-skills" / "cover-letter" / "SKILL.md"
 
 
 class EditorDecision(BaseModel):
@@ -142,6 +144,18 @@ def _model() -> ChatAnthropic:
     )
 
 
+def load_cover_letter_skill() -> str:
+    """Load the portable cover-letter Skill; it is the Writer's only drafting logic."""
+    skill_path = Path(os.getenv("SCOUT_COVER_LETTER_SKILL", DEFAULT_SKILL_PATH))
+    try:
+        return skill_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise RuntimeError(
+            f"Cover-letter Skill was not found at {skill_path}. "
+            "Set SCOUT_COVER_LETTER_SKILL to cover-letter/SKILL.md."
+        ) from exc
+
+
 def _invoke(model: Any, payload: object, tracker: UsageTracker, agent: str) -> object:
     response = model.invoke(payload)
     tracker.record(agent, response)
@@ -197,14 +211,17 @@ def build_writer_subgraph(model: ChatAnthropic, tracker: UsageTracker):
     """Writer receives typed context and has no tool binding."""
     def write(state: WriterState):
         revision_context = [revision.model_dump() for revision in state.get("revisions", [])]
-        prompt = f"""Draft a concise, tailored cover letter using only these structured inputs.
-Never claim experience or company facts not represented below. Apply the requested revisions when supplied.
-
-Resume: {state['resume'].model_dump_json()}
-Job description: {state['job_description'].model_dump_json()}
-Company brief: {state['company_brief'].model_dump_json()}
-Revisions: {revision_context}
-"""
+        skill = load_cover_letter_skill()
+        prompt = "\n\n".join(
+            [
+                skill,
+                "## Runtime inputs",
+                f"Resume: {state['resume'].model_dump_json()}",
+                f"Job description: {state['job_description'].model_dump_json()}",
+                f"Company brief: {state['company_brief'].model_dump_json()}",
+                f"Revisions: {revision_context}",
+            ]
+        )
         return {
             "draft": _content(_invoke(model, prompt, tracker, "writer")),
             "draft_version": state.get("draft_version", 0) + 1,
