@@ -138,7 +138,7 @@ def _model() -> ChatAnthropic:
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise ValueError("ANTHROPIC_API_KEY environment variable not set for Scout v2.")
     return ChatAnthropic(
-        model=os.getenv("SCOUT_V2_MODEL", "claude-sonnet-4-20250514"),
+        model=os.getenv("SCOUT_V2_MODEL", "claude-sonnet-5"),
         temperature=0,
         max_tokens=4096,
     )
