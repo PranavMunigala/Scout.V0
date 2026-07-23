@@ -1,0 +1,42 @@
+[
+  {
+    "id": "northstar-health-backend",
+    "company": "Northstar Health",
+    "profile": {"skills": ["Python", "FastAPI", "PostgreSQL", "Docker"], "seniority_level": "mid", "years_of_experience": 4.0},
+    "job_description": {"must_haves": ["Python", "API design", "relational databases"], "nice_to_haves": ["healthcare software"], "years_required": 3},
+    "company_brief": {"name": "Northstar Health", "mission": "Make care coordination simpler for clinics.", "recent_news": ["Expanded clinician workflow tools."], "hiring_signals": ["Backend team is building clinician-facing workflow services."], "sources": ["https://northstar.example/care-coordination"]},
+    "expected_qualities": ["Names Northstar Health and its care-coordination mission", "Connects Python, FastAPI, and PostgreSQL to API work", "Does not claim healthcare experience"]
+  },
+  {
+    "id": "harbor-grid-data",
+    "company": "Harbor Grid",
+    "profile": {"skills": ["Python", "SQL", "Pandas", "Data visualization"], "seniority_level": "mid", "years_of_experience": 3.0},
+    "job_description": {"must_haves": ["Python", "SQL", "data analysis"], "nice_to_haves": ["energy markets"], "years_required": 2},
+    "company_brief": {"name": "Harbor Grid", "mission": "Help utilities plan reliable, lower-carbon grids.", "recent_news": ["Published a utility planning report."], "hiring_signals": ["Data team is hiring to improve planning dashboards."], "sources": ["https://harborgrid.example/report"]},
+    "expected_qualities": ["References grid planning or utility dashboards", "Uses Python and SQL as evidence", "Does not claim energy-market expertise"]
+  },
+  {
+    "id": "civic-transit-product",
+    "company": "Civic Transit",
+    "profile": {"skills": ["Product discovery", "User research", "Figma", "SQL"], "seniority_level": "mid", "years_of_experience": 5.0},
+    "job_description": {"must_haves": ["product management", "user research", "cross-functional collaboration"], "nice_to_haves": ["public-sector products"], "years_required": 4},
+    "company_brief": {"name": "Civic Transit", "mission": "Improve access to dependable public transportation.", "recent_news": ["Launched a rider-alert pilot."], "hiring_signals": ["Product group is improving rider information experiences."], "sources": ["https://civictransit.example/rider-alerts"]},
+    "expected_qualities": ["Connects user research to rider information", "Avoids claiming public-sector employment", "Uses a product-management tone rather than an engineering template"]
+  },
+  {
+    "id": "luma-learning-designer",
+    "company": "Luma Learning",
+    "profile": {"skills": ["Instructional design", "Accessibility", "Learning analytics", "Stakeholder communication"], "seniority_level": "senior", "years_of_experience": 8.0},
+    "job_description": {"must_haves": ["instructional design", "accessibility", "learning measurement"], "nice_to_haves": ["higher education"], "years_required": 5},
+    "company_brief": {"name": "Luma Learning", "mission": "Make career learning more accessible for working adults.", "recent_news": ["Released accessible course-authoring improvements."], "hiring_signals": ["Learning design team is measuring course outcomes."], "sources": ["https://lumalearning.example/accessibility"]},
+    "expected_qualities": ["References accessible learning or working adults", "Matches instructional design and learning analytics", "Does not invent higher-education experience"]
+  },
+  {
+    "id": "atlas-logistics-operations",
+    "company": "Atlas Logistics",
+    "profile": {"skills": ["Operations analysis", "Excel", "SQL", "Process improvement"], "seniority_level": "junior", "years_of_experience": 2.0},
+    "job_description": {"must_haves": ["operations analysis", "spreadsheet analysis", "process improvement"], "nice_to_haves": ["supply-chain experience"], "years_required": 1},
+    "company_brief": {"name": "Atlas Logistics", "mission": "Give regional shippers clearer delivery operations.", "recent_news": ["Opened a regional operations hub."], "hiring_signals": ["Operations team is standardizing delivery exception reporting."], "sources": ["https://atlaslogistics.example/hub"]},
+    "expected_qualities": ["Mentions delivery operations or exception reporting", "Uses operations analysis and spreadsheet evidence", "Does not claim supply-chain experience"]
+  }
+]
