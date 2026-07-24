@@ -1,148 +1,93 @@
-# Scout v0 - Resume & Job Description Gap Analysis Tool
+# Scout v2
 
-A CLI tool that extracts structured JSON data from resumes (PDFs) and job descriptions (TXT), and performs deterministic gap analysis using Google's Gemini API with Instructor.
+Scout turns a resume and job description into a grounded cover-letter draft. It keeps
+the original Gemini + Instructor extraction flow intact, then passes typed data through a
+bounded Claude/LangGraph Researcher → Writer → Editor workflow.
 
-## Features
+## Install
 
-- **Resume Extraction**: Parses PDF resumes and extracts skills, seniority level, and years of experience
-- **Job Description Analysis**: Extracts must-haves, nice-to-haves, and minimum experience requirements
-- **Gap Analysis**: Deterministically evaluates if resume meets job requirements with evidence-based results
-- **Structured Output**: JSON output combining all extracted data and gap analysis
-
-## Installation
-
-### Things you need
-
-- Python 3.8+
-- Google API Key (for Gemini 2.5 Flash)
-
-### Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/PranavMunigala/Scout.V0.git
-cd Scout.V0
-```
-
-2. Install dependencies:
-```bash
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-3. Set your Google API key:
-```bash
-export GOOGLE_API_KEY="your-api-key-here"
+Set `GOOGLE_API_KEY` for the original `extract` command and `ANTHROPIC_API_KEY` for
+`cover-letter`. Scout v2 also expects the sibling
+[`claude-skills`](https://github.com/PranavMunigala/claude-skills) repository; override
+its location with `SCOUT_COVER_LETTER_SKILL` when needed.
+
+## Use
+
+```powershell
+python main.py cover-letter --resume examples/PranavResume28.pdf --jd examples/bdjobdesc.txt --company BD --out bd-cover-letter.md
 ```
 
-## Usage
+The legacy extraction command remains available:
 
-### Basic Command
-
-```bash
-python main.py extract --resume resume.pdf --jd job_description.txt --out results.json
+```powershell
+python main.py extract --resume resume.pdf --jd job-description.txt --out analysis.json
 ```
 
-### Options
+## Pipeline
 
-- `--resume`: Path to the resume PDF file (required)
-- `--jd`: Path to the job description text file (required)
-- `--out`: Output JSON file path (default: `scout_output.json`)
-
-### Example
-
-```bash
-python main.py extract \
-  --resume /path/to/resume.pdf \
-  --jd /path/to/job_description.txt \
-  --out /path/to/analysis.json
+```mermaid
+flowchart LR
+    I[Resume PDF + JD] --> X[Scout v0 extraction]
+    X --> S[Typed ResumeSchema + JobDescriptionSchema]
+    S --> R[Researcher\nweb_search only]
+    R --> B[CompanyBrief]
+    B --> W[Writer\ncover-letter Skill, no tools]
+    S --> W
+    W --> E[Editor\ngrammar_check only]
+    E -->|revisions, max 2 cycles| W
+    E -->|approved| O[Cover letter + token spend]
 ```
 
-## Output Format
+The supervisor owns routing and has an explicit `done` exit. Agent boundaries carry
+Pydantic objects (`CompanyBrief`, `Revision`) rather than free-text research notes.
 
-The JSON output contains three main sections:
+## Sample run
 
-```json
-{
-  "resume": {
-    "skills": ["Python", "FastAPI", "PostgreSQL", ...],
-    "seniority_level": "mid",
-    "years_of_experience": 5.5
-  },
-  "job_description": {
-    "must_haves": ["5+ years Python", "AWS experience", ...],
-    "nice_to_haves": ["Kubernetes", "Published work", ...],
-    "years_required": 5
-  },
-  "gap_analysis": [
-    {
-      "skill_or_requirement": "5+ years Python",
-      "evidence_in_resume": true,
-      "notes": "Resume shows 6 years of Python experience across three companies"
-    },
-    {
-      "skill_or_requirement": "AWS experience",
-      "evidence_in_resume": false,
-      "notes": "No mention of AWS in the resume; only Azure cloud experience listed"
-    }
-  ]
-}
-```
+**Input:** A mid-level candidate with four years of Python, FastAPI, PostgreSQL, and
+Docker experience applies to Northstar Health's backend role. The source-backed company
+brief says it is simplifying care coordination and expanding clinician workflow tools.
 
-## Architecture
+**Output:**
 
-### Project Structure
+> Dear Hiring Team,
+>
+> My four years of experience with Python, FastAPI, and PostgreSQL align directly with
+> the backend requirements for Northstar Health. These technologies map to the role's
+> Python, API design, and relational-database requirements.
+>
+> Northstar Health's focus on simplifying care coordination for clinics, alongside its
+> clinician-facing workflow tools, gives that match a concrete context. My Python,
+> FastAPI, PostgreSQL, and Docker background can support the backend work behind those
+> services.
+>
+> I would welcome the opportunity to discuss how that experience could contribute to
+> your backend team. Thank you for your consideration.
 
-```
-scout/
-├── __init__.py           # Package initialization
-├── schemas.py            # Pydantic models (ResumeSchema, JobDescriptionSchema, GapAnalysisSchema)
-├── core.py               # Core functions (extract_resume, extract_jd, analyze_gaps)
-├── logger.py             # Logging configuration for LLM errors
-└── cli.py                # CLI interface using Typer
+## Evaluation
 
-main.py                    # Entry point
-requirements.txt           # Python dependencies
-README.md                  # This file
-```
+[`evals/cover_letter/cases.json`](evals/cover_letter/cases.json) contains five varied
+profile/JD/company-brief cases with quality checklists. The Skill is also runnable outside
+Scout through `claude-skills/cover-letter/run_standalone.py`, making its standalone and
+agent outputs directly comparable.
 
-### Schemas
+## Cost and specialization
 
-- **ResumeSchema**: skills, seniority_level, years_of_experience
-- **JobDescriptionSchema**: must_haves, nice_to_haves, years_required
-- **GapAnalysisSchema**: List of gap items with evidence and notes
+A measured Claude Sonnet 5 Writer + Skill call for the Northstar sample used **887 input
+tokens** and **1,024 output tokens** (including 672 adaptive-thinking tokens). At the
+current introductory rate of $2 / million input tokens and $10 / million output tokens,
+that request cost **$0.0120**. This is a measured Writer pass, not a full pipeline total;
+the complete Researcher → Writer → Editor run logs its actual per-agent token usage and
+enforces a 50,000-token cap. [Claude Sonnet 5 pricing](https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5)
 
-### Key Dependencies
-
-- **typer**: CLI framework
-- **pydantic**: Schema validation (v2)
-- **instructor**: Structured LLM outputs (ensures output from LLM matches Schema)
-- **google-generativeai**: Gemini API access
-- **pymupdf (fitz)**: PDF text extraction
-
-## Error Handling
-
-All LLM validation errors and retries are logged to `scout_retries.log`. The tool:
-- Validates all extracted data against Pydantic schemas
-- Retries on validation failures (via Instructor)
-- Logs detailed error messages for debugging
-- Exits gracefully with meaningful error messages
-
-## Workflow
-
-1. User provides resume PDF and job description text
-2. Scout extracts resume data (skills, experience, seniority)
-3. Scout extracts JD requirements (must-haves, nice-to-haves, years)
-4. Scout performs gap analysis (checking each must-have against resume)
-5. Results are saved as JSON with evidence-based analysis
-
-## Version
-
-- **Current Version**: 0.1.0
-
-## License
-
-MIT
-
-## Author
-
-Pranav Munigala
+Specialization buys accountable context. A single-agent draft can blend research, writing,
+and editing into one opaque response. Scout isolates company research in a sourced
+`CompanyBrief`, makes the Writer use the portable cover-letter Skill, and confines the
+Editor to grammar checks and typed revisions. The trade-off is extra model calls and
+token cost; the return is a letter whose company claims and candidate claims can be traced
+to structured inputs rather than a generic prompt.
