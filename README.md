@@ -75,3 +75,19 @@ brief says it is simplifying care coordination and expanding clinician workflow 
 profile/JD/company-brief cases with quality checklists. The Skill is also runnable outside
 Scout through `claude-skills/cover-letter/run_standalone.py`, making its standalone and
 agent outputs directly comparable.
+
+## Cost and specialization
+
+A measured Claude Sonnet 5 Writer + Skill call for the Northstar sample used **887 input
+tokens** and **1,024 output tokens** (including 672 adaptive-thinking tokens). At the
+current introductory rate of $2 / million input tokens and $10 / million output tokens,
+that request cost **$0.0120**. This is a measured Writer pass, not a full pipeline total;
+the complete Researcher → Writer → Editor run logs its actual per-agent token usage and
+enforces a 50,000-token cap. [Claude Sonnet 5 pricing](https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5)
+
+Specialization buys accountable context. A single-agent draft can blend research, writing,
+and editing into one opaque response. Scout isolates company research in a sourced
+`CompanyBrief`, makes the Writer use the portable cover-letter Skill, and confines the
+Editor to grammar checks and typed revisions. The trade-off is extra model calls and
+token cost; the return is a letter whose company claims and candidate claims can be traced
+to structured inputs rather than a generic prompt.
