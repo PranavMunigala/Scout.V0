@@ -12,6 +12,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
+from dotenv import load_dotenv
 from pydantic import BaseModel, Field, model_validator
 
 from scout.schemas import (
@@ -325,6 +326,7 @@ def run_cover_letter(
     resume: ResumeSchema, job_description: JobDescriptionSchema, company_name: str
 ) -> PipelineState:
     """Run the Day 2 pipeline and log actual Claude token spend."""
+    load_dotenv()
     result = build_cover_letter_graph().invoke({
         "resume": resume,
         "job_description": job_description,
